@@ -1,0 +1,24 @@
+{
+  "name": "comp4513-asg1",
+  "version": "1.0.0",
+  "description": "web 3 assignment 1",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ashbrooke8/COMP4513-Asg1.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ashbrooke8/COMP4513-Asg1/issues"
+  },
+  "homepage": "https://github.com/ashbrooke8/COMP4513-Asg1#readme",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.48.1",
+    "express": "^4.21.2",
+    "sqlite3": "^5.1.7"
+  }
+}
