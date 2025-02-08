@@ -1,6 +1,4 @@
-const express = require("express");
 const supa = require("@supabase/supabase-js");
-const app = express();
 
 const supaUrl = "https://ktaeyulwikklstugtztt.supabase.co";
 const supaAnonKey =
