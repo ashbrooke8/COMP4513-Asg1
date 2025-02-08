@@ -19,6 +19,7 @@
   "homepage": "https://github.com/ashbrooke8/COMP4513-Asg1#readme",
   "dependencies": {
     "@supabase/supabase-js": "^2.48.1",
+    "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "sqlite3": "^5.1.7"
   }

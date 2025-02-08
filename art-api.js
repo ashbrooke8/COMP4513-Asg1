@@ -8,6 +8,7 @@ const tables = ["eras", "galleries", "artists", "paintings", "genres"];
 tables.forEach((table) => {
   router.handleEntireTable(app, table);
 });
+
 // router.handleEntireTable(app, "eras");
 // router.handleEntireTable(app, "galleries");
 // router.handleEntireTable(app, "artists");
