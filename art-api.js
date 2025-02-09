@@ -14,12 +14,28 @@ tables.forEach((table) => {
   router.handleEntireTable(app, table);
 });
 
-router.handleAllPaintings(app);
-router.handleAllGenres(app);
+//create routes with no args
+const simpleRoutes = [
+  "handleAllPaintings",
+  "handleAllGenres",
+  "handleSpecificPainting",
+  "handleGallerySubstring",
+  "handleArtistSubstring",
+  "handleSpecificGenre",
+  "handlePaintingsSorted",
+  "handleGenresOfPainting",
+  "handlePaintingsOfGenre",
+  "handlePaintingSubstring",
+];
+simpleRoutes.forEach((method) => {
+  if (typeof router[method] === "function") {
+    router[method](app);
+  }
+});
+
+//routes with args
 router.handleSpecificResult(app, "galleries", "galleryId");
 router.handleSpecificResult(app, "artists", "artistId");
-router.handleSpecificPainting(app);
-router.handleSpecificResult(app, "genres", "genreId");
 
 app.listen(8080, () => {
   console.log("Server listening on port 8080");

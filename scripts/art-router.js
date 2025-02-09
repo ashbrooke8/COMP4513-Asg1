@@ -85,6 +85,90 @@ const handleSpecificGenre = (app) => {
   });
 };
 
+const handleGallerySubtring = (app) => {
+  app.get("/api/galleries/country/:substring", async (req, res) => {
+    const { data, error } = await supabase
+      .from("galleries")
+      .select("*")
+      .ilike("galleryCountry", `${req.params.substring}%`);
+    handleError(data, error);
+    res.send(data);
+  });
+};
+
+const handleArtistSubstring = (app) => {
+  app.get("/api/artists/:field/:substring", async (req, res) => {
+    let column = "";
+    if (req.params.field === "search") {
+      column = "lastName";
+    } else if (req.params.field === "country") {
+      column === "nationality";
+    }
+    const { data, error } = await supabase
+      .from("artists")
+      .select("*")
+      .ilike(column, `${req.params.substring}%`);
+    handleError(data, error);
+    res.send(data);
+  });
+};
+
+const handlePaintingsSorted = (app) => {
+  app.get("/api/paintings/sort/:sortField", async (req, res) => {
+    let column = "";
+    if (req.params.sortField === "title") {
+      column = "title";
+    } else if (req.params.sortField === "year") {
+      column = "yearOfWork";
+    }
+    const { data, error } = await supabase
+      .from("paintings")
+      .select(
+        `paintingId, artistId (firstName, lastName, nationality, gender, yearOfBirth, yearOfDeath, details, artistLink), galleryId (galleryName, galleryNativeName, galleryCity, galleryAddress, galleryCountry, latitude, longitude, galleryWebSite, flickrPlaceId, yahooWoeId, googlePlaceId), imageFileName, title, shapeId (shapeName), museumLink, accessionNumber, copyrightText, description, excerpt, yearOfWork, width, height, medium, cost, MSRP, googleLink, googleDescription, wikiLink, jsonAnnotations`
+      )
+      .order(column, { ascending: true });
+    handleError(data, error);
+    res.send(data);
+  });
+};
+
+const handlePaintingSubstring = (app) => {
+  app.get("/api/paintings/search/:substring", async (req, res) => {
+    const { data, error } = await supabase
+      .from("paintings")
+      .select(
+        `paintingId, artistId (firstName, lastName, nationality, gender, yearOfBirth, yearOfDeath, details, artistLink), galleryId (galleryName, galleryNativeName, galleryCity, galleryAddress, galleryCountry, latitude, longitude, galleryWebSite, flickrPlaceId, yahooWoeId, googlePlaceId), imageFileName, title, shapeId (shapeName), museumLink, accessionNumber, copyrightText, description, excerpt, yearOfWork, width, height, medium, cost, MSRP, googleLink, googleDescription, wikiLink, jsonAnnotations`
+      )
+      .ilike("title", `%${req.params.substring}%`);
+    handleError(data, error);
+    res.send(data);
+  });
+};
+
+const handleGenresOfPainting = (app) => {
+  app.get("/api/genres/painting/:ref", async (req, res) => {
+    const { data, error } = await supabase
+      .from("paintinggenres")
+      .select(`genreId (genreId, genreName, eraId, description, wikiLink)`)
+      .eq("paintingId", req.params.ref)
+      .order(`genreId (genreName)`, { ascending: true });
+    handleError(data, error);
+    res.send(data);
+  });
+};
+
+const handlePaintingsOfGenre = (app) => {
+  app.get("/api/paintings/genre/:ref", async (req, res) => {
+    const { data, error } = await supabase
+      .from("paintinggenres")
+      .select(`paintingId (paintingId, title, yearOfWork)`)
+      .eq("genreId", req.params.ref)
+      .order(`paintingId (yearOfWork)`);
+    handleError(data, error);
+    res.send(data);
+  });
+};
+
 module.exports = {
   supabase,
   handleEntireTable,
@@ -93,4 +177,10 @@ module.exports = {
   handleSpecificResult,
   handleSpecificPainting,
   handleSpecificGenre,
+  handleGallerySubtring,
+  handleArtistSubstring,
+  handlePaintingsSorted,
+  handleGenresOfPainting,
+  handlePaintingsOfGenre,
+  handlePaintingSubstring,
 };
