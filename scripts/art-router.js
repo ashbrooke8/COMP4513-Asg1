@@ -7,6 +7,11 @@ const supabase = supa.createClient(supaUrl, supaAnonKey);
 const paintingSelect = `paintingId, artistId (artistId, firstName, lastName, nationality, gender, yearOfBirth, yearOfDeath, details, artistLink), galleryId (galleryId, galleryName, galleryNativeName, galleryCity, galleryAddress, galleryCountry, latitude, longitude, galleryWebSite, flickrPlaceId, yahooWoeId, googlePlaceId), imageFileName, title, shapeId (shapeId, shapeName), museumLink, accessionNumber, copyrightText, description, excerpt, yearOfWork, width, height, medium, cost, MSRP, googleLink, googleDescription, wikiLink, jsonAnnotations`;
 const genreSelect = `genreId, genreName, eraId(eraId, eraName, eraYears), description, wikiLink`;
 
+const selectOptions = {
+  paintings: paintingSelect,
+  genres: genreSelect,
+};
+
 const handleError = (res, data, error, message = "No data found") => {
   if (error) {
     console.error("Error fetching data:", error);
@@ -25,26 +30,8 @@ const handleError = (res, data, error, message = "No data found") => {
 
 const handleEntireTable = (app, table) => {
   app.get(`/api/${table}`, async (req, res) => {
-    const { data, error } = await supabase.from(table).select("*");
-    if (handleError(res, data, error, `Data not found`)) return;
-    res.send(data);
-  });
-};
-
-const handleAllPaintings = (app) => {
-  app.get("/api/paintings", async (req, res) => {
-    const { data, error } = await supabase
-      .from("paintings")
-      .select(paintingSelect)
-      .order("title", { ascending: true });
-    if (handleError(res, data, error, `Data not found`)) return;
-    res.send(data);
-  });
-};
-
-const handleAllGenres = (app) => {
-  app.get("/api/genres", async (req, res) => {
-    const { data, error } = await supabase.from("genres").select(genreSelect);
+    const select = selectOptions[table] || "*";
+    const { data, error } = await supabase.from(table).select(select);
     if (handleError(res, data, error, `Data not found`)) return;
     res.send(data);
   });
@@ -301,8 +288,6 @@ const handlePaintingsOfEra = (app) => {
 module.exports = {
   supabase,
   handleEntireTable,
-  handleAllPaintings,
-  handleAllGenres,
   handleSpecificResult,
   handleSpecificPainting,
   handleSpecificGenre,

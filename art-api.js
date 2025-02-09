@@ -1,23 +1,16 @@
 const express = require("express");
 const app = express();
 require("dotenv").config();
-// const supa = require("@supabase/supabase-js");
-// const supaUrl = process.env.SUPABASE_URL;
-// const supaAnonKey = process.env.SUPABASE_ANON_KEY;
-// const supabase = supa.createClient(supaUrl, supaAnonKey);
-
 const router = require("./scripts/art-router.js");
 
 //base table routes to return all fields in table
-const tables = ["eras", "galleries", "artists"];
+const tables = ["eras", "galleries", "artists", "paintings", "genres"];
 tables.forEach((table) => {
   router.handleEntireTable(app, table);
 });
 
 //create routes with no args
 const simpleRoutes = [
-  "handleAllPaintings",
-  "handleAllGenres",
   "handleSpecificPainting",
   "handleGallerySubstring",
   "handleArtistSubstring",
