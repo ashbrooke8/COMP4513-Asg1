@@ -30,6 +30,8 @@ const simpleRoutes = [
   "handlePaintingsInGallery",
   "handlePaintingsByArtist",
   "handlePaintingsByNationality",
+  "handlePaintingsOfEra",
+  "handleGallerySubtring",
 ];
 simpleRoutes.forEach((method) => {
   if (typeof router[method] === "function") {

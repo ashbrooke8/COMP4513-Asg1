@@ -198,11 +198,32 @@ const handlePaintingsOfGenre = (app) => {
       .from("paintinggenres")
       .select(`paintingId (paintingId, title, yearOfWork)`)
       .eq("genreId", req.params.ref)
-      .order(`paintingId (yearOfWork)`);
+      .order("yearOfWork", { referencedTable: "paintingId", ascending: true });
     handleError(data, error);
     res.send(data);
   });
 };
+
+//RETURN ALL PAINTINGS OF A GIVEN ERA
+const handlePaintingsOfEra = (app) => {
+  app.get("/api/paintings/era/:ref", async (req, res) => {
+    const { data, error } = await supabase
+      .from("paintinggenres")
+      .select(
+        `paintingId!inner (paintingId, title, yearOfWork), genreId!inner (eraId)`
+      )
+      .eq("genreId.eraId", req.params.ref)
+      .order("yearOfWork", { referencedTable: "paintingId", ascending: true });
+    handleError(data, error);
+    res.send(data);
+  });
+};
+
+//RETURN THE GENRE NAME AND NUMBER OF PAINTINGS FOR EACH GENRE
+
+//RETURNS THE ARTIST NAME AND NUMBER OF PAINTINGS FOR EACH ARTIST
+
+//RETURN THE GENRE NAME AND NUMBER OF PAINTINGS FOR EACH GENRE
 
 module.exports = {
   supabase,
@@ -222,4 +243,5 @@ module.exports = {
   handlePaintingsInGallery,
   handlePaintingsByArtist,
   handlePaintingsByNationality,
+  handlePaintingsOfEra,
 };
