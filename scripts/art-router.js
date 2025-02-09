@@ -15,6 +15,11 @@ const selectOptions = {
 const handleError = (res, data, error, message = "No data found") => {
   if (error) {
     console.error("Error fetching data:", error);
+    if (error.message.includes("invalid input syntax")) {
+      return res.status(400).json({
+        error: "Invalid input type.",
+      });
+    }
     res.status(500).json({ error: "Server error" });
     return true;
   }
