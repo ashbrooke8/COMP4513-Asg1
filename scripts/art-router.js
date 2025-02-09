@@ -7,21 +7,26 @@ const supabase = supa.createClient(supaUrl, supaAnonKey);
 const paintingSelect = `paintingId, artistId (artistId, firstName, lastName, nationality, gender, yearOfBirth, yearOfDeath, details, artistLink), galleryId (galleryId, galleryName, galleryNativeName, galleryCity, galleryAddress, galleryCountry, latitude, longitude, galleryWebSite, flickrPlaceId, yahooWoeId, googlePlaceId), imageFileName, title, shapeId (shapeId, shapeName), museumLink, accessionNumber, copyrightText, description, excerpt, yearOfWork, width, height, medium, cost, MSRP, googleLink, googleDescription, wikiLink, jsonAnnotations`;
 const genreSelect = `genreId, genreName, eraId(eraId, eraName, eraYears), description, wikiLink`;
 
-const handleError = (data, error) => {
+const handleError = (res, data, error, message = "No data found") => {
   if (error) {
-    console.error("Error fetching data: ", error);
-    return res.status(500).json({ error: "server error" });
+    console.error("Error fetching data:", error);
+    res.status(500).json({ error: "Server error" });
+    return true;
   }
-  if (data.length === 0) {
-    console.error("No content found");
-    return res.status(404).json({ message: "No data found" });
+
+  if (!data || data.length === 0) {
+    console.error(message);
+    res.status(404).json({ message });
+    return true;
   }
+
+  return false;
 };
 
 const handleEntireTable = (app, table) => {
   app.get(`/api/${table}`, async (req, res) => {
     const { data, error } = await supabase.from(table).select("*");
-    handleError(data, error);
+    if (handleError(res, data, error, `Data not found`)) return;
     res.send(data);
   });
 };
@@ -32,7 +37,7 @@ const handleAllPaintings = (app) => {
       .from("paintings")
       .select(paintingSelect)
       .order("title", { ascending: true });
-    handleError(data, error);
+    if (handleError(res, data, error, `Data not found`)) return;
     res.send(data);
   });
 };
@@ -40,7 +45,7 @@ const handleAllPaintings = (app) => {
 const handleAllGenres = (app) => {
   app.get("/api/genres", async (req, res) => {
     const { data, error } = await supabase.from("genres").select(genreSelect);
-    handleError(data, error);
+    if (handleError(res, data, error, `Data not found`)) return;
     res.send(data);
   });
 };
@@ -51,7 +56,15 @@ const handleSpecificResult = (app, table, idField) => {
       .from(table)
       .select("*")
       .eq(idField, req.params.ref);
-    handleError(data, error);
+    if (
+      handleError(
+        res,
+        data,
+        error,
+        `${table} with id ${req.params.ref} not found`
+      )
+    )
+      return;
     res.send(data);
   });
 };
@@ -62,7 +75,15 @@ const handleSpecificPainting = (app) => {
       .from("paintings")
       .select(paintingSelect)
       .eq("paintingId", req.params.ref);
-    handleError(data, error);
+    if (
+      handleError(
+        res,
+        data,
+        error,
+        `Painting with id ${req.params.ref} not found`
+      )
+    )
+      return;
     res.send(data);
   });
 };
@@ -73,7 +94,10 @@ const handleSpecificGenre = (app) => {
       .from("genres")
       .select(genreSelect)
       .eq("genreId", req.params.ref);
-    handleError(data, error);
+    if (
+      handleError(res, data, error, `Genre with id ${req.params.ref} not found`)
+    )
+      return;
     res.send(data);
   });
 };
@@ -84,7 +108,15 @@ const handleGallerySubtring = (app) => {
       .from("galleries")
       .select("*")
       .ilike("galleryCountry", `${req.params.substring}%`);
-    handleError(data, error);
+    if (
+      handleError(
+        res,
+        data,
+        error,
+        `Gallery with substring ${req.params.substring} not found`
+      )
+    )
+      return;
     res.send(data);
   });
 };
@@ -101,7 +133,15 @@ const handleArtistSubstring = (app) => {
       .from("artists")
       .select("*")
       .ilike(column, `${req.params.substring}%`);
-    handleError(data, error);
+    if (
+      handleError(
+        res,
+        data,
+        error,
+        `Artist with substring ${req.params.substring} not found`
+      )
+    )
+      return;
     res.send(data);
   });
 };
@@ -118,7 +158,7 @@ const handlePaintingsSorted = (app) => {
       .from("paintings")
       .select(paintingSelect)
       .order(column, { ascending: true });
-    handleError(data, error);
+    if (handleError(res, data, error, `Data not found`)) return;
     res.send(data);
   });
 };
@@ -129,12 +169,21 @@ const handlePaintingSubstring = (app) => {
       .from("paintings")
       .select(paintingSelect)
       .ilike("title", `%${req.params.substring}%`);
-    handleError(data, error);
+    if (
+      handleError(
+        res,
+        data,
+        error,
+        `Painting with substring ${req.params.substring} not found`
+      )
+    )
+      return;
     res.send(data);
   });
 };
 
 const handlePaintingsBetweenYears = (app) => {
+  //ERROR CHECKING FOR START DATE BEING GREATER THAN END DATE NEEDS TO BE IMPLEMENTD
   app.get("/api/paintings/years/:start/:end", async (req, res) => {
     const { data, error } = await supabase
       .from("paintings")
@@ -142,7 +191,7 @@ const handlePaintingsBetweenYears = (app) => {
       .gte("yearOfWork", req.params.start)
       .lte("yearOfWork", req.params.end)
       .order("yearOfWork", { ascending: true });
-    handleError(data, error);
+    if (handleError(res, data, error, `Data not found`)) return;
     res.send(data);
   });
 };
@@ -153,7 +202,15 @@ const handlePaintingsInGallery = (app) => {
       .from("paintings")
       .select(paintingSelect)
       .eq("galleryId", req.params.ref);
-    handleError(data, error);
+    if (
+      handleError(
+        res,
+        data,
+        error,
+        `Paintings in gallery ${req.params.ref} not found`
+      )
+    )
+      return;
     res.send(data);
   });
 };
@@ -164,18 +221,34 @@ const handlePaintingsByArtist = (app) => {
       .from("paintings")
       .select(paintingSelect)
       .eq("artistId", req.params.ref);
-    handleError(data, error);
+    if (
+      handleError(
+        res,
+        data,
+        error,
+        `Paintings by artist ${req.params.ref} not found`
+      )
+    )
+      return;
     res.send(data);
   });
 };
 
 const handlePaintingsByNationality = (app) => {
-  app.get("/api/paintings/artists/country/:ref", async (req, res) => {
+  app.get("/api/paintings/artist/country/:ref", async (req, res) => {
     const { data, error } = await supabase
       .from("paintings")
       .select(paintingSelect)
       .ilike("artistId.nationality", `${req.params.ref}%`);
-    handleError(data, error);
+    if (
+      handleError(
+        res,
+        data,
+        error,
+        `Paintings by artist with nationality ${req.params.ref} not found`
+      )
+    )
+      return;
     res.send(data);
   });
 };
@@ -187,7 +260,7 @@ const handleGenresOfPainting = (app) => {
       .select(`genreId (genreId, genreName, eraId, description, wikiLink)`)
       .eq("paintingId", req.params.ref)
       .order(`genreId (genreName)`, { ascending: true });
-    handleError(data, error);
+    if (handleError(res, data, error, `Data not found`)) return;
     res.send(data);
   });
 };
@@ -199,7 +272,7 @@ const handlePaintingsOfGenre = (app) => {
       .select(`paintingId (paintingId, title, yearOfWork)`)
       .eq("genreId", req.params.ref)
       .order("yearOfWork", { referencedTable: "paintingId", ascending: true });
-    handleError(data, error);
+    if (handleError(res, data, error, `Data not found`)) return;
     res.send(data);
   });
 };
@@ -214,7 +287,7 @@ const handlePaintingsOfEra = (app) => {
       )
       .eq("genreId.eraId", req.params.ref)
       .order("yearOfWork", { referencedTable: "paintingId", ascending: true });
-    handleError(data, error);
+    if (handleError(res, data, error, `Data not found`)) return;
     res.send(data);
   });
 };
