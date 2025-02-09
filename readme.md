@@ -49,7 +49,7 @@ This assignment is an API created in Node, connected to a database being provisi
 - https://comp4513-asg1.glitch.me/api/eras
 - https://comp4513-asg1.glitch.me/api/galleries
 - https://comp4513-asg1.glitch.me/api/galleries/30
-- https://comp4513-asg1.glitch.me/api/galleries/Calgary
+- https://comp4513-asg1.glitch.me/api/galleries/Calgary (server error rn)
 - https://comp4513-asg1.glitch.me/api/galleries/country/fra
 - https://comp4513-asg1.glitch.me/api/artists
 - https://comp4513-asg1.glitch.me/api/artists/12
@@ -71,10 +71,10 @@ This assignment is an API created in Node, connected to a database being provisi
 - https://comp4513-asg1.glitch.me/api/genres
 - https://comp4513-asg1.glitch.me/api/genres/76
 - https://comp4513-asg1.glitch.me/api/genres/painting/408
-- https://comp4513-asg1.glitch.me/api/genres/painting/jsdfhg
-- https://comp4513-asg1.glitch.me/api/paintings/genre/78
-- https://comp4513-asg1.glitch.me/api/paintings/era/2
-- https://comp4513-asg1.glitch.me/api/counts/genres
-- https://comp4513-asg1.glitch.me/api/counts/artists
-- https://comp4513-asg1.glitch.me/api/counts/topgenres/20
-- https://comp4513-asg1.glitch.me/api/counts/topgenres/2034958
+- https://comp4513-asg1.glitch.me/api/genres/painting/jsdfhg (server error rn)
+- https://comp4513-asg1.glitch.me/api/paintings/genre/78 (not working rn)
+- https://comp4513-asg1.glitch.me/api/paintings/era/2 (server error rn)
+- https://comp4513-asg1.glitch.me/api/counts/genres (not yet implemented)
+- https://comp4513-asg1.glitch.me/api/counts/artists (not yet implemented)
+- https://comp4513-asg1.glitch.me/api/counts/topgenres/20 (not yet implemented)
+- https://comp4513-asg1.glitch.me/api/counts/topgenres/2034958 (not yet implemented)
