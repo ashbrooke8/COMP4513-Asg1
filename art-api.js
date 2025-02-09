@@ -26,6 +26,10 @@ const simpleRoutes = [
   "handleGenresOfPainting",
   "handlePaintingsOfGenre",
   "handlePaintingSubstring",
+  "handlePaintingsBetweenYears",
+  "handlePaintingsInGallery",
+  "handlePaintingsByArtist",
+  "handlePaintingsByNationality",
 ];
 simpleRoutes.forEach((method) => {
   if (typeof router[method] === "function") {

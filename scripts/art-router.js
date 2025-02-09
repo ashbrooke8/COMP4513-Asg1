@@ -4,6 +4,9 @@ const supaUrl = process.env.SUPABASE_URL;
 const supaAnonKey = process.env.SUPABASE_ANON_KEY;
 const supabase = supa.createClient(supaUrl, supaAnonKey);
 
+const paintingSelect = `paintingId, artistId (artistId, firstName, lastName, nationality, gender, yearOfBirth, yearOfDeath, details, artistLink), galleryId (galleryId, galleryName, galleryNativeName, galleryCity, galleryAddress, galleryCountry, latitude, longitude, galleryWebSite, flickrPlaceId, yahooWoeId, googlePlaceId), imageFileName, title, shapeId (shapeId, shapeName), museumLink, accessionNumber, copyrightText, description, excerpt, yearOfWork, width, height, medium, cost, MSRP, googleLink, googleDescription, wikiLink, jsonAnnotations`;
+const genreSelect = `genreId, genreName, eraId(eraId, eraName, eraYears), description, wikiLink`;
+
 const handleError = (data, error) => {
   if (error) {
     console.error("Error fetching data: ", error);
@@ -27,9 +30,7 @@ const handleAllPaintings = (app) => {
   app.get("/api/paintings", async (req, res) => {
     const { data, error } = await supabase
       .from("paintings")
-      .select(
-        `paintingId, artistId (artistId, firstName, lastName, nationality, gender, yearOfBirth, yearOfDeath, details, artistLink), galleryId (galleryId, galleryName, galleryNativeName, galleryCity, galleryAddress, galleryCountry, latitude, longitude, galleryWebSite, flickrPlaceId, yahooWoeId, googlePlaceId), imageFileName, title, shapeId (shapeName), museumLink, accessionNumber, copyrightText, description, excerpt, yearOfWork, width, height, medium, cost, MSRP, googleLink, googleDescription, wikiLink, jsonAnnotations`
-      )
+      .select(paintingSelect)
       .order("title", { ascending: true });
     handleError(data, error);
     res.send(data);
@@ -38,11 +39,7 @@ const handleAllPaintings = (app) => {
 
 const handleAllGenres = (app) => {
   app.get("/api/genres", async (req, res) => {
-    const { data, error } = await supabase
-      .from("genres")
-      .select(
-        `genreId, genreName, eraId(eraId, eraName, eraYears), description, wikiLink`
-      );
+    const { data, error } = await supabase.from("genres").select(genreSelect);
     handleError(data, error);
     res.send(data);
   });
@@ -63,9 +60,7 @@ const handleSpecificPainting = (app) => {
   app.get("/api/paintings/:ref", async (req, res) => {
     const { data, error } = await supabase
       .from("paintings")
-      .select(
-        `paintingId, artistId (firstName, lastName, nationality, gender, yearOfBirth, yearOfDeath, details, artistLink), galleryId (galleryName, galleryNativeName, galleryCity, galleryAddress, galleryCountry, latitude, longitude, galleryWebSite, flickrPlaceId, yahooWoeId, googlePlaceId), imageFileName, title, shapeId (shapeName), museumLink, accessionNumber, copyrightText, description, excerpt, yearOfWork, width, height, medium, cost, MSRP, googleLink, googleDescription, wikiLink, jsonAnnotations`
-      )
+      .select(paintingSelect)
       .eq("paintingId", req.params.ref);
     handleError(data, error);
     res.send(data);
@@ -76,9 +71,7 @@ const handleSpecificGenre = (app) => {
   app.get("/api/genres/:ref", async (req, res) => {
     const { data, error } = await supabase
       .from("genres")
-      .select(
-        `genreId, genreName, eraId(eraId, eraName, eraYears), description, wikiLink`
-      )
+      .select(genreSelect)
       .eq("genreId", req.params.ref);
     handleError(data, error);
     res.send(data);
@@ -123,9 +116,7 @@ const handlePaintingsSorted = (app) => {
     }
     const { data, error } = await supabase
       .from("paintings")
-      .select(
-        `paintingId, artistId (firstName, lastName, nationality, gender, yearOfBirth, yearOfDeath, details, artistLink), galleryId (galleryName, galleryNativeName, galleryCity, galleryAddress, galleryCountry, latitude, longitude, galleryWebSite, flickrPlaceId, yahooWoeId, googlePlaceId), imageFileName, title, shapeId (shapeName), museumLink, accessionNumber, copyrightText, description, excerpt, yearOfWork, width, height, medium, cost, MSRP, googleLink, googleDescription, wikiLink, jsonAnnotations`
-      )
+      .select(paintingSelect)
       .order(column, { ascending: true });
     handleError(data, error);
     res.send(data);
@@ -136,10 +127,54 @@ const handlePaintingSubstring = (app) => {
   app.get("/api/paintings/search/:substring", async (req, res) => {
     const { data, error } = await supabase
       .from("paintings")
-      .select(
-        `paintingId, artistId (firstName, lastName, nationality, gender, yearOfBirth, yearOfDeath, details, artistLink), galleryId (galleryName, galleryNativeName, galleryCity, galleryAddress, galleryCountry, latitude, longitude, galleryWebSite, flickrPlaceId, yahooWoeId, googlePlaceId), imageFileName, title, shapeId (shapeName), museumLink, accessionNumber, copyrightText, description, excerpt, yearOfWork, width, height, medium, cost, MSRP, googleLink, googleDescription, wikiLink, jsonAnnotations`
-      )
+      .select(paintingSelect)
       .ilike("title", `%${req.params.substring}%`);
+    handleError(data, error);
+    res.send(data);
+  });
+};
+
+const handlePaintingsBetweenYears = (app) => {
+  app.get("/api/paintings/years/:start/:end", async (req, res) => {
+    const { data, error } = await supabase
+      .from("paintings")
+      .select(paintingSelect)
+      .gte("yearOfWork", req.params.start)
+      .lte("yearOfWork", req.params.end)
+      .order("yearOfWork", { ascending: true });
+    handleError(data, error);
+    res.send(data);
+  });
+};
+
+const handlePaintingsInGallery = (app) => {
+  app.get("/api/paintings/galleries/:ref", async (req, res) => {
+    const { data, error } = await supabase
+      .from("paintings")
+      .select(paintingSelect)
+      .eq("galleryId", req.params.ref);
+    handleError(data, error);
+    res.send(data);
+  });
+};
+
+const handlePaintingsByArtist = (app) => {
+  app.get("/api/paintings/artist/:ref", async (req, res) => {
+    const { data, error } = await supabase
+      .from("paintings")
+      .select(paintingSelect)
+      .eq("artistId", req.params.ref);
+    handleError(data, error);
+    res.send(data);
+  });
+};
+
+const handlePaintingsByNationality = (app) => {
+  app.get("/api/paintings/artists/country/:ref", async (req, res) => {
+    const { data, error } = await supabase
+      .from("paintings")
+      .select(paintingSelect)
+      .ilike("artistId.nationality", `${req.params.ref}%`);
     handleError(data, error);
     res.send(data);
   });
@@ -183,4 +218,8 @@ module.exports = {
   handleGenresOfPainting,
   handlePaintingsOfGenre,
   handlePaintingSubstring,
+  handlePaintingsBetweenYears,
+  handlePaintingsInGallery,
+  handlePaintingsByArtist,
+  handlePaintingsByNationality,
 };
