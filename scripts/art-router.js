@@ -261,9 +261,11 @@ const handlePaintingsOfGenre = (app) => {
   app.get("/api/paintings/genre/:ref", async (req, res) => {
     const { data, error } = await supabase
       .from("paintinggenres")
-      .select(`paintingId (paintingId, title, yearOfWork)`)
+      .select(`section:paintings (paintingId, title, yearOfWork)`)
       .eq("genreId", req.params.ref)
-      .order("yearOfWork", { referencedTable: "paintingId", ascending: true });
+      .order("section(yearOfWork)", {
+        ascending: true,
+      });
     if (handleError(res, data, error, `Data not found`)) return;
     res.send(data);
   });
@@ -275,10 +277,12 @@ const handlePaintingsOfEra = (app) => {
     const { data, error } = await supabase
       .from("paintinggenres")
       .select(
-        `paintingId!inner (paintingId, title, yearOfWork), genreId!inner (eraId)`
+        `section:paintings (paintingId, title, yearOfWork), genreId!inner (eraId)`
       )
       .eq("genreId.eraId", req.params.ref)
-      .order("yearOfWork", { referencedTable: "paintingId", ascending: true });
+      .order("section(yearOfWork)", {
+        ascending: true,
+      });
     if (handleError(res, data, error, `Data not found`)) return;
     res.send(data);
   });
