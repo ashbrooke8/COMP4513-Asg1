@@ -194,7 +194,7 @@ exports.handlePaintingsBetweenYears = (app) => {
       //error handling to check that end is bigger than start
       return res
         .status(400)
-        .json({ error: "Starting year must be less than end year." });
+        .json({ error: "Starting year must be smaller than end year." });
     }
     const { data, error } = await supabase
       .from("paintings")
@@ -203,7 +203,8 @@ exports.handlePaintingsBetweenYears = (app) => {
       .lte("yearOfWork", end)
       .order("yearOfWork", { ascending: true });
     if (handleError(res, data, error, `Data not found`)) return;
-    if (req.params.start > req.params.end) { //doesn't work
+    if (req.params.start > req.params.end) {
+      //doesn't work
       return res.status(400).json({
         error: "Year start must be less than year end",
       });
