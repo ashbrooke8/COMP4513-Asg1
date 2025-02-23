@@ -63,7 +63,7 @@ This assignment is an API created in Node, connected to a database being provisi
 - https://comp4513-asg1.glitch.me/api/paintings/search/port
 - https://comp4513-asg1.glitch.me/api/paintings/search/pORt
 - https://comp4513-asg1.glitch.me/api/paintings/search/connolly
-- https://comp4513-asg1.glitch.me/api/paintings/years/1800/1850 DOUBLE CHECK!!!
+- https://comp4513-asg1.glitch.me/api/paintings/years/1800/1850
 - https://comp4513-asg1.glitch.me/api/paintings/galleries/5
 - https://comp4513-asg1.glitch.me/api/paintings/artist/16
 - https://comp4513-asg1.glitch.me/api/paintings/artist/666
@@ -74,7 +74,7 @@ This assignment is an API created in Node, connected to a database being provisi
 - https://comp4513-asg1.glitch.me/api/genres/painting/jsdfhg
 - https://comp4513-asg1.glitch.me/api/paintings/genre/78
 - https://comp4513-asg1.glitch.me/api/paintings/era/2
-- https://comp4513-asg1.glitch.me/api/counts/genres (not yet implemented)
-- https://comp4513-asg1.glitch.me/api/counts/artists (not yet implemented)
-- https://comp4513-asg1.glitch.me/api/counts/topgenres/20 (not yet implemented)
-- https://comp4513-asg1.glitch.me/api/counts/topgenres/2034958 (not yet implemented)
+- https://comp4513-asg1.glitch.me/api/counts/genres
+- https://comp4513-asg1.glitch.me/api/counts/artists
+- https://comp4513-asg1.glitch.me/api/counts/topgenres/20
+- https://comp4513-asg1.glitch.me/api/counts/topgenres/2034958

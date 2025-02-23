@@ -3,12 +3,6 @@ const app = express();
 require("dotenv").config();
 const router = require("./scripts/art-router.js");
 
-//base table routes to return all fields in table
-const tables = ["eras", "galleries", "artists", "paintings", "genres"];
-tables.forEach((table) => {
-  router.handleEntireTable(app, table);
-});
-
 //create routes with no args
 const simpleRoutes = [
   "handleSpecificPainting",
@@ -25,11 +19,21 @@ const simpleRoutes = [
   "handlePaintingsByNationality",
   "handlePaintingsOfEra",
   "handleGallerySubtring",
+  "handleGenreCount",
+  "handleArtistCount",
+  "handleTopGenreCount",
+  "handleAllPaintings",
 ];
 simpleRoutes.forEach((method) => {
   if (typeof router[method] === "function") {
     router[method](app);
   }
+});
+
+//base table routes to return all fields in table
+const tables = ["eras", "galleries", "artists", "genres"];
+tables.forEach((table) => {
+  router.handleEntireTable(app, table);
 });
 
 //routes with args
