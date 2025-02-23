@@ -203,6 +203,11 @@ exports.handlePaintingsBetweenYears = (app) => {
       .lte("yearOfWork", end)
       .order("yearOfWork", { ascending: true });
     if (handleError(res, data, error, `Data not found`)) return;
+    if (req.params.start > req.params.end) { //doesn't work
+      return res.status(400).json({
+        error: "Year start must be less than year end",
+      });
+    }
     res.send(data);
   });
 };
