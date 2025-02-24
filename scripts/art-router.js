@@ -4,8 +4,9 @@ const supaUrl = process.env.SUPABASE_URL;
 const supaAnonKey = process.env.SUPABASE_ANON_KEY;
 const supabase = supa.createClient(supaUrl, supaAnonKey);
 
-const paintingSelect = `paintingId, artistId (artistId, firstName, lastName, nationality, gender, yearOfBirth, yearOfDeath, details, artistLink), galleryId (galleryId, galleryName, galleryNativeName, galleryCity, galleryAddress, galleryCountry, latitude, longitude, galleryWebSite, flickrPlaceId, yahooWoeId, googlePlaceId), imageFileName, title, shapeId (shapeId, shapeName), museumLink, accessionNumber, copyrightText, description, excerpt, yearOfWork, width, height, medium, cost, MSRP, googleLink, googleDescription, wikiLink, jsonAnnotations`;
-const genreSelect = `genreId, genreName, eraId(eraId, eraName, eraYears), description, wikiLink`;
+// const paintingSelect = `paintingId, artist:artistId (artistId, firstName, lastName, nationality, gender, yearOfBirth, yearOfDeath, details, artistLink), gallery:galleryId (galleryId, galleryName, galleryNativeName, galleryCity, galleryAddress, galleryCountry, latitude, longitude, galleryWebSite, flickrPlaceId, yahooWoeId, googlePlaceId), imageFileName, title, shape:shapeId (shapeId, shapeName), museumLink, accessionNumber, copyrightText, description, excerpt, yearOfWork, width, height, medium, cost, MSRP, googleLink, googleDescription, wikiLink, jsonAnnotations`;
+const paintingSelect = `paintingId, artist:artistId (*), gallery:galleryId (*), imageFileName, title, shape:shapeId (*), museumLink, accessionNumber, copyrightText, description, excerpt, yearOfWork, width, height, medium, cost, MSRP, googleLink, googleDescription, wikiLink, jsonAnnotations`;
+const genreSelect = `genreId, genreName, era:eraId(*), description, wikiLink`;
 
 const selectOptions = {
   paintings: paintingSelect,
@@ -188,13 +189,20 @@ exports.handlePaintingSubstring = (app) => {
 
 exports.handlePaintingsBetweenYears = (app) => {
   app.get("/api/paintings/years/:start/:end", async (req, res) => {
-    const start = parseInt(req.params.start);
-    const end = parseInt(req.params.end);
-    if (start > end) {
-      //error handling to check that end is bigger than start
+    const start = req.params.start;
+    const end = req.params.end;
+    //check that both start and end are positive ints
+    const regex = /^[1-9]\d*$/;
+    if (!regex.test(start) || !regex.test(end)) {
       return res
         .status(400)
-        .json({ error: "Starting year must be smaller than end year." });
+        .json({ error: "Start and end years must be a positive integer." });
+    }
+    if (start > end) {
+      //error handling to check that end is bigger than start
+      return res.status(400).json({
+        error: "Starting year must be smaller than or equal to end year.",
+      });
     }
     const { data, error } = await supabase
       .from("paintings")
@@ -277,9 +285,11 @@ exports.handleGenresOfPainting = (app) => {
   app.get("/api/genres/painting/:ref", async (req, res) => {
     const { data, error } = await supabase
       .from("paintinggenres")
-      .select(`genreId (genreId, genreName, eraId, description, wikiLink)`)
+      .select(
+        `genre:genreId (genreId, genreName, era:eraId (eraId, eraName, eraYears), description, wikiLink)`
+      )
       .eq("paintingId", req.params.ref)
-      .order(`genreId (genreName)`, { ascending: true });
+      .order(`genre (genreName)`, { ascending: true });
     if (handleError(res, data, error, `Data not found`)) return;
     res.send(data);
   });
@@ -305,10 +315,10 @@ exports.handlePaintingsOfEra = (app) => {
     const { data, error } = await supabase
       .from("paintinggenres")
       .select(
-        `paintings:paintings (paintingId, title, yearOfWork), genreId!inner (eraId)`
+        `painting:paintings (paintingId, title, yearOfWork), era:genreId!inner (eraId)`
       )
       .eq("genreId.eraId", req.params.ref)
-      .order("paintings(yearOfWork)", {
+      .order("painting(yearOfWork)", {
         ascending: true,
       });
     if (handleError(res, data, error, `Data not found`)) return;

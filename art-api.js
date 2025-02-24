@@ -40,6 +40,11 @@ tables.forEach((table) => {
 router.handleSpecificResult(app, "galleries", "galleryId");
 router.handleSpecificResult(app, "artists", "artistId");
 
+//if no route is found
+app.use((req, res, next) => {
+  res.status(404).json({ error: "Route not found! Please recheck." });
+});
+
 app.listen(8080, () => {
   console.log("Server listening on port 8080");
 });
