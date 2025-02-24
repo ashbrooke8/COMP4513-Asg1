@@ -3,12 +3,6 @@ const app = express();
 require("dotenv").config();
 const router = require("./scripts/art-router.js");
 
-//base table routes to return all fields in table
-const tables = ["eras", "galleries", "artists", "paintings", "genres"];
-tables.forEach((table) => {
-  router.handleEntireTable(app, table);
-});
-
 //create routes with no args
 const simpleRoutes = [
   "handleSpecificPainting",
@@ -25,6 +19,10 @@ const simpleRoutes = [
   "handlePaintingsByNationality",
   "handlePaintingsOfEra",
   "handleGallerySubtring",
+  "handleGenreCount",
+  "handleArtistCount",
+  "handleTopGenreCount",
+  "handleAllPaintings",
 ];
 simpleRoutes.forEach((method) => {
   if (typeof router[method] === "function") {
@@ -32,9 +30,20 @@ simpleRoutes.forEach((method) => {
   }
 });
 
+//base table routes to return all fields in table
+const tables = ["eras", "galleries", "artists", "genres"];
+tables.forEach((table) => {
+  router.handleEntireTable(app, table);
+});
+
 //routes with args
 router.handleSpecificResult(app, "galleries", "galleryId");
 router.handleSpecificResult(app, "artists", "artistId");
+
+//if no route is found
+app.use((req, res, next) => {
+  res.status(404).json({ error: "Route not found! Please recheck." });
+});
 
 app.listen(8080, () => {
   console.log("Server listening on port 8080");
