@@ -1,44 +1,45 @@
 const express = require("express");
 const app = express();
 require("dotenv").config();
-const router = require("./scripts/art-router.js");
 
-//create routes with no args
-const simpleRoutes = [
-  "handleSpecificPainting",
-  "handleGallerySubstring",
-  "handleArtistSubstring",
-  "handleSpecificGenre",
-  "handlePaintingsSorted",
-  "handleGenresOfPainting",
-  "handlePaintingsOfGenre",
-  "handlePaintingSubstring",
-  "handlePaintingsBetweenYears",
-  "handlePaintingsInGallery",
-  "handlePaintingsByArtist",
-  "handlePaintingsByNationality",
-  "handlePaintingsOfEra",
-  "handleGallerySubtring",
-  "handleGenreCount",
-  "handleArtistCount",
-  "handleTopGenreCount",
-  "handleAllPaintings",
-];
-simpleRoutes.forEach((method) => {
-  if (typeof router[method] === "function") {
-    router[method](app);
-  }
-});
+//gather all route methods
+const artistsRoutes = require("./scripts/artists-router.js");
+const galleriesRoutes = require("./scripts/galleries-router.js");
+const genresRoutes = require("./scripts/genres-router.js");
+const otherRoutes = require("./scripts/other-router.js");
+const paintingsRoutes = require("./scripts/paintings-router.js");
 
-//base table routes to return all fields in table
+// all route creation
+paintingsRoutes.handleAllPaintings(app);
+
+artistsRoutes.handleArtistSubstring(app);
+artistsRoutes.handleArtistCount(app);
+
+galleriesRoutes.handleGallerySubtring(app);
+
+genresRoutes.handleSpecificGenre(app);
+genresRoutes.handleGenresOfPainting(app);
+genresRoutes.handleGenreCount(app);
+genresRoutes.handleTopGenreCount(app);
+
 const tables = ["eras", "galleries", "artists", "genres"];
 tables.forEach((table) => {
-  router.handleEntireTable(app, table);
+  otherRoutes.handleEntireTable(app, table);
 });
+otherRoutes.handleSpecificResult(app, "galleries", "galleryId");
+otherRoutes.handleSpecificResult(app, "artists", "artistId");
 
-//routes with args
-router.handleSpecificResult(app, "galleries", "galleryId");
-router.handleSpecificResult(app, "artists", "artistId");
+paintingsRoutes.handleSpecificPainting(app);
+paintingsRoutes.handlePaintingsSorted(app);
+paintingsRoutes.handlePaintingSubstring(app);
+paintingsRoutes.handlePaintingsBetweenYears(app);
+paintingsRoutes.handlePaintingsInGallery(app);
+paintingsRoutes.handlePaintingsByArtist(app);
+paintingsRoutes.handlePaintingsByNationality(app);
+paintingsRoutes.handlePaintingsOfGenre(app);
+paintingsRoutes.handlePaintingsOfEra(app);
+paintingsRoutes.handlePaintingsOfGenre(app);
+paintingsRoutes.handlePaintingsOfEra(app);
 
 //if no route is found
 app.use((req, res, next) => {

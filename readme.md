@@ -44,7 +44,7 @@ This assignment is an API created in Node, connected to a database being provisi
 | /api/counts/artists                    | Returns the artist name (first name space last name) and the number of paintings for each artist, sorted by the number of paintings (most to fewest) |
 | /api/counts/topgenres/**ref**          | Returns the genre name and the number of paintings for each genre, sorted by the number of paintings (most to least)                                 |
 
-## Test Links (to be implemented)
+## Test Links
 
 - https://comp4513-asg1.glitch.me/api/eras
 - https://comp4513-asg1.glitch.me/api/galleries
@@ -78,3 +78,4 @@ This assignment is an API created in Node, connected to a database being provisi
 - https://comp4513-asg1.glitch.me/api/counts/artists
 - https://comp4513-asg1.glitch.me/api/counts/topgenres/20
 - https://comp4513-asg1.glitch.me/api/counts/topgenres/2034958
+> Note: For /api/paintings/artist/country/ital, I followed the Example API Route, using the singular artist instead of the plural artists specified in the instructions.
